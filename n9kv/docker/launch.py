@@ -46,14 +46,16 @@ class N9KV_vm(vrnetlab.VM):
             logging.getLogger().info("Disk image was not found")
             exit(1)
         super(N9KV_vm, self).__init__(
-            username, password, disk_image=disk_image, ram=8192
+            #username, password, disk_image=disk_image, ram=8192
+            username, password, disk_image=disk_image, ram=6192
         )
         self.hostname = hostname
+        self.hostname = "admin@123"
         self.conn_mode = conn_mode
         # mgmt + 128 that show up in the vm, may as well populate them all in vrnetlab right away
         self.num_nics = 129
         self.nic_type = "e1000"
-        self.qemu_args.extend(["-cpu", "host,level=9"])
+        self.qemu_args.extend(["-cpu", "host,level=9,-vmx-xsaves,-vmx-shadow-vmcs,-vmx-invpcid-exit"])
 
         # bios for n9kv
         self.qemu_args.extend(["-bios", "/OVMF.fd"])
@@ -116,9 +118,9 @@ class N9KV_vm(vrnetlab.VM):
                 )
             elif ridx == 1:  # login
                 self.logger.debug("matched login prompt")
-                self.logger.debug(f'trying to log in with "admin" / {self.password}')
+                self.logger.debug(f'trying to log in with "admin" / "admin"')
                 self.wait_write("admin", wait=None)
-                self.wait_write(self.password, wait="Password:")
+                self.wait_write("admin", wait="Password:")
 
                 # run main config!
                 self.bootstrap_config()
@@ -163,6 +165,7 @@ class N9KV_vm(vrnetlab.VM):
         self.wait_write("feature telnet")
         self.wait_write("feature netconf")
         self.wait_write("feature grpc")
+        self.wait_write("boot nxos nxos.9.2.4.bin")
         self.wait_write("exit")
         self.wait_write("copy running-config startup-config")
 

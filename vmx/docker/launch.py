@@ -174,10 +174,11 @@ class VMX_vcp(vrnetlab.VM):
         self.wait_write("delete chassis auto-image-upgrade")
         self.wait_write("commit")
         self.wait_write("set chassis fpc 0 pic 0 number-of-ports 96")
+        self.wait_write("set chassis fpc 0 pic 0 interface-type et")
+        self.wait_write("set chassis fpc 0 lite-mode")
         self.wait_write("set system host-name {}".format(self.hostname))
         self.wait_write("set system services ssh")
         self.wait_write("set system services netconf ssh")
-        self.wait_write("set system services netconf rfc-compliant")
         self.wait_write(
             "set system services extension-service request-response grpc clear-text port 57400"
         )
